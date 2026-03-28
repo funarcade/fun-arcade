@@ -58,6 +58,12 @@
       border-radius: 18px;
       padding: 16px;
       box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .game-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(96, 165, 250, 0.6);
     }
     .game-card.active {
       border-color: #60a5fa;
@@ -85,6 +91,9 @@
       gap: 20px;
       align-items: start;
     }
+    .hidden {
+      display: none;
+    }
     .canvas-wrap {
       width: 100%;
     }
@@ -94,10 +103,10 @@
       display: block;
       border-radius: 20px;
       border: 3px solid rgba(255,255,255,0.12);
-      background: linear-gradient(180deg, #071123 0%, #0f1d44 45%, #131a3a 100%);
+      background: #071123;
       touch-action: none;
     }
-    .buttons, .touch-controls {
+    .buttons, .touch-controls, .palette {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
@@ -119,8 +128,11 @@
       background: #111827;
       box-shadow: 0 8px 18px rgba(17,24,39,0.3);
     }
-    .touch-controls button {
+    .touch-controls button, .palette button {
       min-width: 84px;
+    }
+    .palette button.active {
+      outline: 3px solid #ffffff;
     }
     .side-box {
       background: rgba(255,255,255,0.04);
@@ -164,6 +176,7 @@
       border-radius: 14px;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
+      line-height: 1.5;
     }
     @media (max-width: 940px) {
       .game-layout {
@@ -178,78 +191,148 @@
     <div class="subtitle">10 games, one arcade, and every game uses points.</div>
     <div class="top-stats">
       <div class="pill">Total Arcade Points: <span id="totalPointsHeader">0</span></div>
-      <div class="pill">Current Game: SkyDrop</div>
+      <div class="pill">Current Game: <span id="currentGameHeader">SkyDrop</span></div>
     </div>
   </header>
 
   <main>
     <section class="menu-grid">
-      <div class="game-card active">
+      <div class="game-card active" data-game="skydrop">
         <h3>SkyDrop</h3>
-        <p>An alien jumps across moons in space to reach a black portal. Then a UFO appears and you can claim a reward.</p>
+        <p>An alien jumps across moons in space to reach a black portal. The levels get harder as you go up.</p>
       </div>
-      <div class="game-card"><h3>Maze Quest</h3><p>Coming soon. This game will also use points.</p></div>
-      <div class="game-card"><h3>Treasure Tiles</h3><p>Coming soon. This game will also use points.</p></div>
-      <div class="game-card"><h3>Bubble Match</h3><p>Coming soon. This game will also use points.</p></div>
+      <div class="game-card" data-game="colortap">
+        <h3>Color Tap</h3>
+        <p>Start with a blank biome and color trees, clouds, flowers, and more. Higher levels have more things to paint.</p>
+      </div>
+      <div class="game-card" data-game="coming1">
+        <h3>Maze Quest</h3>
+        <p>Coming soon. This game will also use points.</p>
+      </div>
+      <div class="game-card" data-game="coming2">
+        <h3>Bubble Match</h3>
+        <p>Coming soon. This game will also use points.</p>
+      </div>
     </section>
 
     <section class="panel">
-      <div class="game-layout">
-        <div class="canvas-wrap">
-          <canvas id="skyCanvas" width="760" height="520"></canvas>
-          <div class="buttons">
-            <button id="restartBtn">Restart Game</button>
-            <button id="rewardBtn" class="secondary">Claim Reward</button>
+      <section id="skySection">
+        <div class="game-layout">
+          <div class="canvas-wrap">
+            <canvas id="skyCanvas" width="760" height="520"></canvas>
+            <div class="buttons">
+              <button id="skyRestartBtn">Restart Game</button>
+              <button id="skyNextBtn">Next Level</button>
+              <button id="skyRewardBtn" class="secondary">Claim Final Reward</button>
+            </div>
+            <div class="touch-controls">
+              <button id="skyLeftBtn">Left</button>
+              <button id="skyJumpBtn">Jump</button>
+              <button id="skyRightBtn">Right</button>
+            </div>
           </div>
-          <div class="touch-controls">
-            <button id="leftBtn">Left</button>
-            <button id="jumpBtn">Jump</button>
-            <button id="rightBtn">Right</button>
-          </div>
-        </div>
 
-        <div class="side-box">
-          <h2>SkyDrop</h2>
-          <div class="score-row">
-            <div class="score-box">
-              <div class="score-label">This Game Points</div>
-              <div class="score-value" id="gamePointsValue">0</div>
+          <div class="side-box">
+            <h2>SkyDrop</h2>
+            <div class="score-row">
+              <div class="score-box">
+                <div class="score-label">This Game Points</div>
+                <div class="score-value" id="skyPointsValue">0</div>
+              </div>
+              <div class="score-box">
+                <div class="score-label">Current Level</div>
+                <div class="score-value" id="skyLevelValue">1</div>
+              </div>
             </div>
-            <div class="score-box">
-              <div class="score-label">Reward Bonus</div>
-              <div class="score-value">150</div>
+            <p><strong>Story:</strong> An alien jumps across moons in space. Reach the black portal. On the last level, the UFO appears and you can claim a final reward.</p>
+            <p><strong>Keyboard:</strong> A or Left Arrow = move left. D or Right Arrow = move right. W, Up Arrow, or Space = jump.</p>
+            <p><strong>Goal:</strong> Collect stars for points, jump from moon to moon, and reach the portal.</p>
+            <div class="status-box" id="skyStatusText"><strong>Status:</strong> Level 1 started. Reach the portal.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="colorSection" class="hidden">
+        <div class="game-layout">
+          <div class="canvas-wrap">
+            <canvas id="colorCanvas" width="760" height="520"></canvas>
+            <div class="palette">
+              <button class="color-btn active" data-color="#22c55e" style="background:#22c55e;">Green</button>
+              <button class="color-btn" data-color="#60a5fa" style="background:#60a5fa;">Blue</button>
+              <button class="color-btn" data-color="#facc15" style="background:#facc15; color:#111827;">Yellow</button>
+              <button class="color-btn" data-color="#f472b6" style="background:#f472b6;">Pink</button>
+            </div>
+            <div class="buttons">
+              <button id="colorRestartBtn">Restart Game</button>
+              <button id="colorNextBtn">Next Level</button>
+            </div>
+            <div class="touch-controls">
+              <button id="colorLeftBtn">Left</button>
+              <button id="colorJumpBtn">Jump</button>
+              <button id="colorRightBtn">Right</button>
             </div>
           </div>
-          <p><strong>Story:</strong> An alien is jumping across moons in space. Reach the black portal to travel to a planet. After that, fly the UFO and collect your reward.</p>
-          <p><strong>Keyboard:</strong> A or Left Arrow = move left. D or Right Arrow = move right. W, Up Arrow, or Space = jump.</p>
-          <p><strong>Touch:</strong> Use the left, jump, and right buttons.</p>
-          <p><strong>Goal:</strong> Collect stars for points, jump from moon to moon, and touch the black portal at the top.</p>
-          <div class="status-box" id="skyStatusText"><strong>Status:</strong> Jump to the moons and reach the portal.</div>
+
+          <div class="side-box">
+            <h2>Color Tap</h2>
+            <div class="score-row">
+              <div class="score-box">
+                <div class="score-label">This Game Points</div>
+                <div class="score-value" id="colorPointsValue">0</div>
+              </div>
+              <div class="score-box">
+                <div class="score-label">Current Level</div>
+                <div class="score-value" id="colorLevelValue">1</div>
+              </div>
+            </div>
+            <p><strong>Idea:</strong> The biome starts plain and gray. Move around and jump to paint the trees, clouds, flowers, and other objects.</p>
+            <p><strong>How to paint:</strong> Touch an object with your character. It gets painted using your selected color.</p>
+            <p><strong>Keyboard:</strong> A or Left Arrow = move left. D or Right Arrow = move right. W, Up Arrow, or Space = jump.</p>
+            <div class="status-box" id="colorStatusText"><strong>Status:</strong> Paint everything in the biome.</div>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <section id="comingSection" class="hidden">
+        <div class="side-box">
+          <h2>Coming Soon</h2>
+          <p>This game slot is ready, but the game has not been built yet.</p>
+          <p>All future games in this arcade can use the same structure: points, levels, rewards, and an end screen.</p>
+        </div>
+      </section>
     </section>
   </main>
 
   <script>
-    const canvas = document.getElementById('skyCanvas');
-    const ctx = canvas.getContext('2d');
     const totalPointsHeader = document.getElementById('totalPointsHeader');
-    const gamePointsValue = document.getElementById('gamePointsValue');
-    const statusText = document.getElementById('skyStatusText');
+    const currentGameHeader = document.getElementById('currentGameHeader');
+
+    const skyCanvas = document.getElementById('skyCanvas');
+    const skyCtx = skyCanvas.getContext('2d');
+    const colorCanvas = document.getElementById('colorCanvas');
+    const colorCtx = colorCanvas.getContext('2d');
 
     let totalArcadePoints = 0;
+    let activeGame = 'skydrop';
+
     const keys = { left: false, right: false };
 
-    function makeGame() {
-      return {
-        width: 760,
-        height: 520,
-        gravity: 0.45,
-        friction: 0.85,
-        gamePoints: 0,
-        won: false,
-        rewardClaimed: false,
-        alien: { x: 70, y: 438, w: 28, h: 36, vx: 0, vy: 0, onGround: false },
+    function addArcadePoints(n) {
+      totalArcadePoints += n;
+      totalPointsHeader.textContent = totalArcadePoints;
+    }
+
+    function clearMovementKeys() {
+      keys.left = false;
+      keys.right = false;
+    }
+
+    function deepCopy(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    const skyLevels = [
+      {
         platforms: [
           { x: 20, y: 475, w: 130, h: 24 },
           { x: 170, y: 410, w: 120, h: 22 },
@@ -261,14 +344,73 @@
           { x: 560, y: 78, w: 140, h: 22 }
         ],
         stars: [
-          { x: 225, y: 376, r: 8, value: 25, taken: false },
-          { x: 382, y: 315, r: 8, value: 25, taken: false },
-          { x: 548, y: 265, r: 8, value: 25, taken: false },
-          { x: 412, y: 200, r: 8, value: 25, taken: false },
-          { x: 252, y: 145, r: 8, value: 25, taken: false },
-          { x: 435, y: 90, r: 8, value: 25, taken: false }
+          { x: 225, y: 376, r: 8, value: 25 },
+          { x: 382, y: 315, r: 8, value: 25 },
+          { x: 548, y: 265, r: 8, value: 25 },
+          { x: 412, y: 200, r: 8, value: 25 },
+          { x: 252, y: 145, r: 8, value: 25 }
         ],
-        portal: { x: 625, y: 28, w: 44, h: 44 },
+        portal: { x: 625, y: 28, w: 44, h: 44 }
+      },
+      {
+        platforms: [
+          { x: 18, y: 475, w: 108, h: 22 },
+          { x: 150, y: 418, w: 95, h: 20 },
+          { x: 275, y: 365, w: 82, h: 20 },
+          { x: 420, y: 315, w: 90, h: 20 },
+          { x: 565, y: 265, w: 88, h: 20 },
+          { x: 450, y: 206, w: 82, h: 20 },
+          { x: 305, y: 150, w: 82, h: 20 },
+          { x: 150, y: 95, w: 92, h: 20 },
+          { x: 525, y: 58, w: 105, h: 20 }
+        ],
+        stars: [
+          { x: 195, y: 388, r: 8, value: 30 },
+          { x: 465, y: 284, r: 8, value: 30 },
+          { x: 490, y: 176, r: 8, value: 30 },
+          { x: 180, y: 68, r: 8, value: 30 }
+        ],
+        portal: { x: 555, y: 10, w: 46, h: 46 }
+      },
+      {
+        platforms: [
+          { x: 15, y: 475, w: 95, h: 20 },
+          { x: 130, y: 422, w: 72, h: 18 },
+          { x: 255, y: 378, w: 64, h: 18 },
+          { x: 395, y: 333, w: 68, h: 18 },
+          { x: 545, y: 294, w: 72, h: 18 },
+          { x: 450, y: 235, w: 64, h: 18 },
+          { x: 320, y: 186, w: 62, h: 18 },
+          { x: 195, y: 142, w: 62, h: 18 },
+          { x: 340, y: 100, w: 58, h: 18 },
+          { x: 520, y: 58, w: 72, h: 18 }
+        ],
+        stars: [
+          { x: 286, y: 350, r: 8, value: 35 },
+          { x: 575, y: 266, r: 8, value: 35 },
+          { x: 353, y: 158, r: 8, value: 35 },
+          { x: 364, y: 72, r: 8, value: 35 }
+        ],
+        portal: { x: 545, y: 8, w: 48, h: 48 }
+      }
+    ];
+
+    function makeSkyGame() {
+      return {
+        width: 760,
+        height: 520,
+        level: 1,
+        maxLevel: skyLevels.length,
+        points: 0,
+        levelComplete: false,
+        finalComplete: false,
+        rewardClaimed: false,
+        alien: { x: 70, y: 438, w: 28, h: 36, vx: 0, vy: 0, onGround: false },
+        gravity: 0.45,
+        friction: 0.85,
+        platforms: [],
+        stars: [],
+        portal: { x: 0, y: 0, w: 40, h: 40 },
         backgroundStars: Array.from({ length: 70 }, function () {
           return {
             x: Math.random() * 760,
@@ -280,62 +422,104 @@
       };
     }
 
-    let game = makeGame();
+    let skyGame = makeSkyGame();
 
-    function updateDisplays() {
-      totalPointsHeader.textContent = totalArcadePoints;
-      gamePointsValue.textContent = game.gamePoints;
+    function loadSkyLevel(level) {
+      const data = deepCopy(skyLevels[level - 1]);
+      skyGame.level = level;
+      skyGame.platforms = data.platforms;
+      skyGame.stars = data.stars.map(function (s) { s.taken = false; return s; });
+      skyGame.portal = data.portal;
+      skyGame.gravity = 0.43 + (level - 1) * 0.04;
+      skyGame.levelComplete = false;
+      skyGame.finalComplete = false;
+      skyGame.rewardClaimed = false;
+      skyGame.alien.x = 70;
+      skyGame.alien.y = 438;
+      skyGame.alien.vx = 0;
+      skyGame.alien.vy = 0;
+      skyGame.alien.onGround = false;
+      document.getElementById('skyLevelValue').textContent = skyGame.level;
+      document.getElementById('skyPointsValue').textContent = skyGame.points;
+      setSkyStatus('Level ' + skyGame.level + ' started. Reach the portal.');
     }
 
-    function setStatus(message) {
-      statusText.innerHTML = '<strong>Status:</strong> ' + message;
+    function setSkyStatus(message) {
+      document.getElementById('skyStatusText').innerHTML = '<strong>Status:</strong> ' + message;
     }
 
-    function addPoints(n) {
-      totalArcadePoints += n;
-      updateDisplays();
+    function updateSkyDisplays() {
+      document.getElementById('skyLevelValue').textContent = skyGame.level;
+      document.getElementById('skyPointsValue').textContent = skyGame.points;
     }
 
-    function jump() {
-      if (game.won) return;
-      if (game.alien.onGround) {
-        game.alien.vy = -10.8;
-        game.alien.onGround = false;
+    function skyJump() {
+      if (skyGame.levelComplete || skyGame.finalComplete) return;
+      if (skyGame.alien.onGround) {
+        skyGame.alien.vy = -10.8;
+        skyGame.alien.onGround = false;
       }
     }
 
-    function resetAlien() {
-      game.alien.x = 70;
-      game.alien.y = 438;
-      game.alien.vx = 0;
-      game.alien.vy = 0;
-      game.alien.onGround = false;
+    function skyRestart() {
+      skyGame = makeSkyGame();
+      loadSkyLevel(1);
+      clearMovementKeys();
+    }
+
+    function skyNextLevel() {
+      if (!skyGame.levelComplete) {
+        setSkyStatus('Finish the current level first.');
+        return;
+      }
+      if (skyGame.level >= skyGame.maxLevel) {
+        setSkyStatus('You are already on the last level.');
+        return;
+      }
+      clearMovementKeys();
+      loadSkyLevel(skyGame.level + 1);
+    }
+
+    function skyClaimReward() {
+      if (!skyGame.finalComplete) {
+        setSkyStatus('Reach the portal on the last level first.');
+        return;
+      }
+      if (skyGame.rewardClaimed) {
+        setSkyStatus('You already claimed the final reward.');
+        return;
+      }
+      skyGame.rewardClaimed = true;
+      skyGame.points += 150;
+      addArcadePoints(150);
+      updateSkyDisplays();
+      setSkyStatus('Final reward claimed. UFO flight complete. You earned 150 bonus points.');
     }
 
     function rectsOverlap(a, b) {
       return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
     }
 
-    function updateGame() {
-      const a = game.alien;
-      if (game.won) return;
+    function updateSkyGame() {
+      const a = skyGame.alien;
+      if (skyGame.levelComplete || skyGame.finalComplete) return;
 
       if (keys.left) a.vx -= 0.6;
       if (keys.right) a.vx += 0.6;
-      a.vx *= game.friction;
+      a.vx *= skyGame.friction;
       if (a.vx > 5.5) a.vx = 5.5;
       if (a.vx < -5.5) a.vx = -5.5;
 
-      a.vy += game.gravity;
+      a.vy += skyGame.gravity;
       a.x += a.vx;
       a.y += a.vy;
       a.onGround = false;
 
       if (a.x < 0) a.x = 0;
-      if (a.x + a.w > game.width) a.x = game.width - a.w;
+      if (a.x + a.w > skyGame.width) a.x = skyGame.width - a.w;
 
-      for (let i = 0; i < game.platforms.length; i++) {
-        const p = game.platforms[i];
+      for (let i = 0; i < skyGame.platforms.length; i++) {
+        const p = skyGame.platforms[i];
         const landing = a.vy >= 0 && a.x + a.w > p.x && a.x < p.x + p.w && a.y + a.h >= p.y && a.y + a.h <= p.y + p.h + 12;
         if (landing) {
           a.y = p.y - a.h;
@@ -344,195 +528,447 @@
         }
       }
 
-      if (a.y > game.height + 60) {
-        game.gamePoints = Math.max(0, game.gamePoints - 40);
-        resetAlien();
-        updateDisplays();
-        setStatus('You fell into space. 40 points were removed. Try again.');
+      if (a.y > skyGame.height + 60) {
+        skyGame.points = Math.max(0, skyGame.points - 40);
+        a.x = 70;
+        a.y = 438;
+        a.vx = 0;
+        a.vy = 0;
+        a.onGround = false;
+        updateSkyDisplays();
+        setSkyStatus('You fell into space. 40 points were removed. Try again.');
       }
 
-      for (let i = 0; i < game.stars.length; i++) {
-        const s = game.stars[i];
+      for (let i = 0; i < skyGame.stars.length; i++) {
+        const s = skyGame.stars[i];
         if (s.taken) continue;
         const hit = rectsOverlap(a, { x: s.x - s.r, y: s.y - s.r, w: s.r * 2, h: s.r * 2 });
         if (hit) {
           s.taken = true;
-          game.gamePoints += s.value;
-          addPoints(s.value);
+          skyGame.points += s.value;
+          addArcadePoints(s.value);
+          updateSkyDisplays();
         }
       }
 
-      if (rectsOverlap(a, game.portal)) {
-        game.won = true;
-        game.gamePoints += 100;
-        addPoints(100);
-        updateDisplays();
-        setStatus('You reached the black portal. The UFO is here. Press Claim Reward.');
+      if (rectsOverlap(a, skyGame.portal)) {
+        if (skyGame.level < skyGame.maxLevel) {
+          skyGame.levelComplete = true;
+          skyGame.points += 100;
+          addArcadePoints(100);
+          updateSkyDisplays();
+          setSkyStatus('Level ' + skyGame.level + ' complete. Press Next Level.');
+        } else {
+          skyGame.finalComplete = true;
+          skyGame.points += 200;
+          addArcadePoints(200);
+          updateSkyDisplays();
+          setSkyStatus('Final level complete. The UFO arrived. Press Claim Final Reward.');
+        }
       }
     }
 
-    function claimReward() {
-      if (!game.won) {
-        setStatus('Reach the portal first, then claim the reward.');
-        return;
-      }
-      if (game.rewardClaimed) {
-        setStatus('Reward already claimed. Restart if you want to play again.');
-        return;
-      }
-      game.rewardClaimed = true;
-      game.gamePoints += 150;
-      addPoints(150);
-      updateDisplays();
-      setStatus('Reward claimed. UFO flight completed. You earned 150 bonus points.');
+    function drawSkyPlanet(x, y, r, color) {
+      skyCtx.fillStyle = color;
+      skyCtx.beginPath();
+      skyCtx.arc(x, y, r, 0, Math.PI * 2);
+      skyCtx.fill();
+      skyCtx.globalAlpha = 0.2;
+      skyCtx.fillStyle = '#ffffff';
+      skyCtx.beginPath();
+      skyCtx.arc(x - r * 0.22, y - r * 0.22, r * 0.4, 0, Math.PI * 2);
+      skyCtx.fill();
+      skyCtx.globalAlpha = 1;
     }
 
-    function restartGame() {
-      game = makeGame();
-      keys.left = false;
-      keys.right = false;
-      updateDisplays();
-      setStatus('Game restarted. Jump to the moons and reach the portal.');
+    function drawSkyMoon(p) {
+      skyCtx.fillStyle = '#dbe4ff';
+      skyCtx.beginPath();
+      skyCtx.ellipse(p.x + p.w / 2, p.y + p.h / 2, p.w / 2, p.h / 2, 0, 0, Math.PI * 2);
+      skyCtx.fill();
+      skyCtx.fillStyle = '#bfc9ef';
+      skyCtx.beginPath();
+      skyCtx.arc(p.x + p.w * 0.28, p.y + p.h * 0.48, 7, 0, Math.PI * 2);
+      skyCtx.arc(p.x + p.w * 0.63, p.y + p.h * 0.42, 5, 0, Math.PI * 2);
+      skyCtx.fill();
     }
 
-    function drawPlanet(x, y, r, color) {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 0.2;
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(x - r * 0.22, y - r * 0.22, r * 0.4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
+    function drawSkyPortal(portal) {
+      skyCtx.fillStyle = '#111827';
+      skyCtx.beginPath();
+      skyCtx.ellipse(portal.x + portal.w / 2, portal.y + portal.h / 2, portal.w / 2, portal.h / 2, 0, 0, Math.PI * 2);
+      skyCtx.fill();
+      skyCtx.strokeStyle = '#a855f7';
+      skyCtx.lineWidth = 5;
+      skyCtx.stroke();
+      skyCtx.strokeStyle = '#60a5fa';
+      skyCtx.lineWidth = 2;
+      skyCtx.stroke();
     }
 
-    function drawMoon(p) {
-      ctx.fillStyle = '#dbe4ff';
-      ctx.beginPath();
-      ctx.ellipse(p.x + p.w / 2, p.y + p.h / 2, p.w / 2, p.h / 2, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#bfc9ef';
-      ctx.beginPath();
-      ctx.arc(p.x + p.w * 0.28, p.y + p.h * 0.48, 7, 0, Math.PI * 2);
-      ctx.arc(p.x + p.w * 0.63, p.y + p.h * 0.42, 5, 0, Math.PI * 2);
-      ctx.fill();
+    function drawSkyUFO(x, y) {
+      skyCtx.fillStyle = '#93c5fd';
+      skyCtx.beginPath();
+      skyCtx.ellipse(x, y, 34, 13, 0, 0, Math.PI * 2);
+      skyCtx.fill();
+      skyCtx.fillStyle = '#dbeafe';
+      skyCtx.beginPath();
+      skyCtx.ellipse(x, y - 8, 14, 8, 0, 0, Math.PI * 2);
+      skyCtx.fill();
+      skyCtx.fillStyle = 'rgba(34,197,94,0.35)';
+      skyCtx.beginPath();
+      skyCtx.moveTo(x - 18, y + 13);
+      skyCtx.lineTo(x + 18, y + 13);
+      skyCtx.lineTo(x, y + 58);
+      skyCtx.closePath();
+      skyCtx.fill();
     }
 
-    function drawPortal(portal) {
-      ctx.fillStyle = '#111827';
-      ctx.beginPath();
-      ctx.ellipse(portal.x + portal.w / 2, portal.y + portal.h / 2, portal.w / 2, portal.h / 2, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#a855f7';
-      ctx.lineWidth = 5;
-      ctx.stroke();
-      ctx.strokeStyle = '#60a5fa';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+    function drawSkyAlien(a) {
+      skyCtx.fillStyle = '#7c3aed';
+      skyCtx.fillRect(a.x, a.y + 8, a.w, a.h - 8);
+      skyCtx.fillStyle = '#86efac';
+      skyCtx.beginPath();
+      skyCtx.arc(a.x + a.w / 2, a.y + 10, 13, 0, Math.PI * 2);
+      skyCtx.fill();
+      skyCtx.fillStyle = '#111827';
+      skyCtx.beginPath();
+      skyCtx.arc(a.x + 10, a.y + 9, 2.3, 0, Math.PI * 2);
+      skyCtx.arc(a.x + 18, a.y + 9, 2.3, 0, Math.PI * 2);
+      skyCtx.fill();
+      skyCtx.strokeStyle = '#86efac';
+      skyCtx.lineWidth = 2;
+      skyCtx.beginPath();
+      skyCtx.moveTo(a.x + 10, a.y - 3);
+      skyCtx.lineTo(a.x + 7, a.y - 9);
+      skyCtx.moveTo(a.x + 18, a.y - 3);
+      skyCtx.lineTo(a.x + 21, a.y - 9);
+      skyCtx.stroke();
     }
 
-    function drawUFO(x, y) {
-      ctx.fillStyle = '#93c5fd';
-      ctx.beginPath();
-      ctx.ellipse(x, y, 34, 13, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#dbeafe';
-      ctx.beginPath();
-      ctx.ellipse(x, y - 8, 14, 8, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(34,197,94,0.35)';
-      ctx.beginPath();
-      ctx.moveTo(x - 18, y + 13);
-      ctx.lineTo(x + 18, y + 13);
-      ctx.lineTo(x, y + 58);
-      ctx.closePath();
-      ctx.fill();
+    function drawSkyStarCollectible(s) {
+      skyCtx.fillStyle = '#fde047';
+      skyCtx.beginPath();
+      skyCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      skyCtx.fill();
+      skyCtx.strokeStyle = '#fff7ae';
+      skyCtx.lineWidth = 2;
+      skyCtx.stroke();
     }
 
-    function drawAlien(a) {
-      ctx.fillStyle = '#7c3aed';
-      ctx.fillRect(a.x, a.y + 8, a.w, a.h - 8);
-      ctx.fillStyle = '#86efac';
-      ctx.beginPath();
-      ctx.arc(a.x + a.w / 2, a.y + 10, 13, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#111827';
-      ctx.beginPath();
-      ctx.arc(a.x + 10, a.y + 9, 2.3, 0, Math.PI * 2);
-      ctx.arc(a.x + 18, a.y + 9, 2.3, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#86efac';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(a.x + 10, a.y - 3);
-      ctx.lineTo(a.x + 7, a.y - 9);
-      ctx.moveTo(a.x + 18, a.y - 3);
-      ctx.lineTo(a.x + 21, a.y - 9);
-      ctx.stroke();
-    }
-
-    function drawStars() {
-      for (let i = 0; i < game.backgroundStars.length; i++) {
-        const s = game.backgroundStars[i];
-        ctx.globalAlpha = s.a;
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    function drawCollectible(s) {
-      ctx.fillStyle = '#fde047';
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#fff7ae';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
-
-    function drawGame() {
-      ctx.clearRect(0, 0, game.width, game.height);
-      const gradient = ctx.createLinearGradient(0, 0, 0, game.height);
+    function drawSkyGame() {
+      skyCtx.clearRect(0, 0, skyGame.width, skyGame.height);
+      const gradient = skyCtx.createLinearGradient(0, 0, 0, skyGame.height);
       gradient.addColorStop(0, '#081227');
       gradient.addColorStop(0.5, '#0f214f');
       gradient.addColorStop(1, '#131737');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, game.width, game.height);
+      skyCtx.fillStyle = gradient;
+      skyCtx.fillRect(0, 0, skyGame.width, skyGame.height);
 
-      drawStars();
-      drawPlanet(86, 92, 42, '#22c55e');
-      drawPlanet(655, 462, 58, '#f59e0b');
+      for (let i = 0; i < skyGame.backgroundStars.length; i++) {
+        const s = skyGame.backgroundStars[i];
+        skyCtx.globalAlpha = s.a;
+        skyCtx.fillStyle = '#ffffff';
+        skyCtx.beginPath();
+        skyCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        skyCtx.fill();
+      }
+      skyCtx.globalAlpha = 1;
 
-      for (let i = 0; i < game.platforms.length; i++) drawMoon(game.platforms[i]);
-      for (let i = 0; i < game.stars.length; i++) if (!game.stars[i].taken) drawCollectible(game.stars[i]);
+      drawSkyPlanet(86, 92, 42, '#22c55e');
+      drawSkyPlanet(655, 462, 58, '#f59e0b');
 
-      drawPortal(game.portal);
-      if (game.won) drawUFO(650, 95);
-      drawAlien(game.alien);
+      for (let i = 0; i < skyGame.platforms.length; i++) drawSkyMoon(skyGame.platforms[i]);
+      for (let i = 0; i < skyGame.stars.length; i++) if (!skyGame.stars[i].taken) drawSkyStarCollectible(skyGame.stars[i]);
+      drawSkyPortal(skyGame.portal);
+      if (skyGame.finalComplete) drawSkyUFO(650, 95);
+      drawSkyAlien(skyGame.alien);
 
-      if (game.won) {
-        ctx.fillStyle = 'rgba(0,0,0,0.34)';
-        ctx.fillRect(0, 0, game.width, game.height);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 34px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Portal Reached', game.width / 2, 180);
-        ctx.font = '22px Arial';
-        ctx.fillText('Press Claim Reward to finish the level.', game.width / 2, 220);
-        ctx.fillText('Points: ' + game.gamePoints, game.width / 2, 255);
+      if (skyGame.levelComplete || skyGame.finalComplete) {
+        skyCtx.fillStyle = 'rgba(0,0,0,0.34)';
+        skyCtx.fillRect(0, 0, skyGame.width, skyGame.height);
+        skyCtx.fillStyle = '#ffffff';
+        skyCtx.font = 'bold 34px Arial';
+        skyCtx.textAlign = 'center';
+        skyCtx.fillText(skyGame.finalComplete ? 'Final Level Complete' : 'Level Complete', skyGame.width / 2, 180);
+        skyCtx.font = '22px Arial';
+        skyCtx.fillText(skyGame.finalComplete ? 'Press Claim Final Reward' : 'Press Next Level', skyGame.width / 2, 220);
+        skyCtx.fillText('Points: ' + skyGame.points, skyGame.width / 2, 255);
       }
     }
 
-    function frame() {
-      updateGame();
-      drawGame();
-      requestAnimationFrame(frame);
+    const colorLevels = [
+      {
+        objects: [
+          { kind: 'circle', x: 120, y: 115, r: 34, reward: 20, label: 'cloud' },
+          { kind: 'rect', x: 190, y: 325, w: 22, h: 90, reward: 20, label: 'tree trunk' },
+          { kind: 'circle', x: 201, y: 300, r: 40, reward: 25, label: 'tree top' },
+          { kind: 'circle', x: 330, y: 402, r: 16, reward: 15, label: 'flower' },
+          { kind: 'rect', x: 480, y: 392, w: 60, h: 28, reward: 20, label: 'bush' }
+        ]
+      },
+      {
+        objects: [
+          { kind: 'circle', x: 120, y: 110, r: 34, reward: 20, label: 'cloud' },
+          { kind: 'circle', x: 240, y: 85, r: 28, reward: 20, label: 'cloud' },
+          { kind: 'rect', x: 195, y: 315, w: 22, h: 100, reward: 20, label: 'tree trunk' },
+          { kind: 'circle', x: 206, y: 285, r: 44, reward: 25, label: 'tree top' },
+          { kind: 'rect', x: 430, y: 335, w: 22, h: 80, reward: 20, label: 'tree trunk' },
+          { kind: 'circle', x: 441, y: 305, r: 38, reward: 25, label: 'tree top' },
+          { kind: 'circle', x: 320, y: 398, r: 16, reward: 15, label: 'flower' },
+          { kind: 'rect', x: 540, y: 390, w: 72, h: 30, reward: 25, label: 'bush' }
+        ]
+      },
+      {
+        objects: [
+          { kind: 'circle', x: 100, y: 105, r: 30, reward: 20, label: 'cloud' },
+          { kind: 'circle', x: 235, y: 82, r: 26, reward: 20, label: 'cloud' },
+          { kind: 'circle', x: 365, y: 70, r: 24, reward: 20, label: 'cloud' },
+          { kind: 'rect', x: 175, y: 320, w: 20, h: 95, reward: 20, label: 'tree trunk' },
+          { kind: 'circle', x: 185, y: 288, r: 42, reward: 25, label: 'tree top' },
+          { kind: 'rect', x: 355, y: 300, w: 20, h: 115, reward: 20, label: 'tree trunk' },
+          { kind: 'circle', x: 365, y: 264, r: 46, reward: 30, label: 'tree top' },
+          { kind: 'rect', x: 555, y: 310, w: 20, h: 105, reward: 20, label: 'tree trunk' },
+          { kind: 'circle', x: 565, y: 276, r: 42, reward: 30, label: 'tree top' },
+          { kind: 'circle', x: 295, y: 400, r: 15, reward: 15, label: 'flower' },
+          { kind: 'circle', x: 495, y: 400, r: 15, reward: 15, label: 'flower' }
+        ]
+      }
+    ];
+
+    function makeColorGame() {
+      return {
+        width: 760,
+        height: 520,
+        groundY: 430,
+        gravity: 0.45,
+        friction: 0.85,
+        level: 1,
+        maxLevel: colorLevels.length,
+        points: 0,
+        complete: false,
+        player: { x: 60, y: 394, w: 28, h: 36, vx: 0, vy: 0, onGround: false },
+        brushColor: '#22c55e',
+        objects: []
+      };
     }
+
+    let colorGame = makeColorGame();
+
+    function loadColorLevel(level) {
+      const data = deepCopy(colorLevels[level - 1]);
+      colorGame.level = level;
+      colorGame.objects = data.objects.map(function (obj) {
+        obj.painted = false;
+        obj.color = '#9ca3af';
+        return obj;
+      });
+      colorGame.complete = false;
+      colorGame.player.x = 60;
+      colorGame.player.y = 394;
+      colorGame.player.vx = 0;
+      colorGame.player.vy = 0;
+      colorGame.player.onGround = false;
+      document.getElementById('colorLevelValue').textContent = colorGame.level;
+      document.getElementById('colorPointsValue').textContent = colorGame.points;
+      setColorStatus('Level ' + colorGame.level + ' started. Paint the biome.');
+    }
+
+    function setColorStatus(message) {
+      document.getElementById('colorStatusText').innerHTML = '<strong>Status:</strong> ' + message;
+    }
+
+    function updateColorDisplays() {
+      document.getElementById('colorLevelValue').textContent = colorGame.level;
+      document.getElementById('colorPointsValue').textContent = colorGame.points;
+    }
+
+    function colorJump() {
+      if (colorGame.complete) return;
+      if (colorGame.player.onGround) {
+        colorGame.player.vy = -10.8;
+        colorGame.player.onGround = false;
+      }
+    }
+
+    function colorRestart() {
+      colorGame = makeColorGame();
+      loadColorLevel(1);
+      clearMovementKeys();
+    }
+
+    function colorNextLevel() {
+      if (!colorGame.complete) {
+        setColorStatus('Paint everything first.');
+        return;
+      }
+      if (colorGame.level >= colorGame.maxLevel) {
+        setColorStatus('You already finished the hardest level.');
+        return;
+      }
+      clearMovementKeys();
+      loadColorLevel(colorGame.level + 1);
+    }
+
+    function playerTouchesColorObject(player, obj) {
+      if (obj.kind === 'rect') {
+        return rectsOverlap(player, { x: obj.x, y: obj.y, w: obj.w, h: obj.h });
+      }
+      const nearestX = Math.max(obj.x - obj.r, Math.min(player.x + player.w / 2, obj.x + obj.r));
+      const nearestY = Math.max(obj.y - obj.r, Math.min(player.y + player.h / 2, obj.y + obj.r));
+      const dx = nearestX - obj.x;
+      const dy = nearestY - obj.y;
+      return dx * dx + dy * dy <= obj.r * obj.r;
+    }
+
+    function updateColorGame() {
+      const p = colorGame.player;
+      if (colorGame.complete) return;
+
+      if (keys.left) p.vx -= 0.6;
+      if (keys.right) p.vx += 0.6;
+      p.vx *= colorGame.friction;
+      if (p.vx > 5.5) p.vx = 5.5;
+      if (p.vx < -5.5) p.vx = -5.5;
+
+      p.vy += colorGame.gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0) p.x = 0;
+      if (p.x + p.w > colorGame.width) p.x = colorGame.width - p.w;
+
+      if (p.y + p.h >= colorGame.groundY) {
+        p.y = colorGame.groundY - p.h;
+        p.vy = 0;
+        p.onGround = true;
+      } else {
+        p.onGround = false;
+      }
+
+      for (let i = 0; i < colorGame.objects.length; i++) {
+        const obj = colorGame.objects[i];
+        if (obj.painted) continue;
+        if (playerTouchesColorObject(p, obj)) {
+          obj.painted = true;
+          obj.color = colorGame.brushColor;
+          colorGame.points += obj.reward;
+          addArcadePoints(obj.reward);
+          updateColorDisplays();
+        }
+      }
+
+      let allPainted = true;
+      for (let i = 0; i < colorGame.objects.length; i++) {
+        if (!colorGame.objects[i].painted) {
+          allPainted = false;
+          break;
+        }
+      }
+
+      if (allPainted) {
+        colorGame.complete = true;
+        colorGame.points += 100;
+        addArcadePoints(100);
+        updateColorDisplays();
+        if (colorGame.level < colorGame.maxLevel) {
+          setColorStatus('Level ' + colorGame.level + ' complete. Press Next Level.');
+        } else {
+          setColorStatus('All Color Tap levels complete. You finished the hardest biome.');
+        }
+      }
+    }
+
+    function drawColorBackground() {
+      const gradient = colorCtx.createLinearGradient(0, 0, 0, colorGame.height);
+      gradient.addColorStop(0, '#d8dee9');
+      gradient.addColorStop(0.62, '#edf2f7');
+      gradient.addColorStop(1, '#cbd5e1');
+      colorCtx.fillStyle = gradient;
+      colorCtx.fillRect(0, 0, colorGame.width, colorGame.height);
+      colorCtx.fillStyle = '#b6beca';
+      colorCtx.fillRect(0, colorGame.groundY, colorGame.width, colorGame.height - colorGame.groundY);
+      colorCtx.fillStyle = '#94a3b8';
+      colorCtx.beginPath();
+      colorCtx.moveTo(0, 430);
+      colorCtx.lineTo(120, 390);
+      colorCtx.lineTo(250, 430);
+      colorCtx.closePath();
+      colorCtx.fill();
+      colorCtx.beginPath();
+      colorCtx.moveTo(440, 430);
+      colorCtx.lineTo(590, 360);
+      colorCtx.lineTo(760, 430);
+      colorCtx.closePath();
+      colorCtx.fill();
+    }
+
+    function drawColorObject(obj) {
+      colorCtx.fillStyle = obj.color;
+      if (obj.kind === 'rect') {
+        colorCtx.fillRect(obj.x, obj.y, obj.w, obj.h);
+      } else {
+        colorCtx.beginPath();
+        colorCtx.arc(obj.x, obj.y, obj.r, 0, Math.PI * 2);
+        colorCtx.fill();
+      }
+    }
+
+    function drawColorPlayer() {
+      const p = colorGame.player;
+      colorCtx.fillStyle = '#2563eb';
+      colorCtx.fillRect(p.x, p.y + 10, p.w, p.h - 10);
+      colorCtx.fillStyle = '#f8fafc';
+      colorCtx.beginPath();
+      colorCtx.arc(p.x + p.w / 2, p.y + 10, 10, 0, Math.PI * 2);
+      colorCtx.fill();
+      colorCtx.fillStyle = colorGame.brushColor;
+      colorCtx.fillRect(p.x + p.w - 5, p.y + 20, 12, 6);
+    }
+
+    function drawColorGame() {
+      colorCtx.clearRect(0, 0, colorGame.width, colorGame.height);
+      drawColorBackground();
+      for (let i = 0; i < colorGame.objects.length; i++) drawColorObject(colorGame.objects[i]);
+      drawColorPlayer();
+
+      if (colorGame.complete) {
+        colorCtx.fillStyle = 'rgba(0,0,0,0.2)';
+        colorCtx.fillRect(0, 0, colorGame.width, colorGame.height);
+        colorCtx.fillStyle = '#111827';
+        colorCtx.font = 'bold 34px Arial';
+        colorCtx.textAlign = 'center';
+        colorCtx.fillText('Biome Painted', colorGame.width / 2, 180);
+        colorCtx.font = '22px Arial';
+        colorCtx.fillText(colorGame.level < colorGame.maxLevel ? 'Press Next Level' : 'You finished Color Tap', colorGame.width / 2, 220);
+        colorCtx.fillText('Points: ' + colorGame.points, colorGame.width / 2, 255);
+      }
+    }
+
+    function showGame(gameId) {
+      activeGame = gameId;
+      clearMovementKeys();
+      currentGameHeader.textContent = gameId === 'skydrop' ? 'SkyDrop' : gameId === 'colortap' ? 'Color Tap' : 'Coming Soon';
+
+      document.getElementById('skySection').classList.add('hidden');
+      document.getElementById('colorSection').classList.add('hidden');
+      document.getElementById('comingSection').classList.add('hidden');
+
+      if (gameId === 'skydrop') document.getElementById('skySection').classList.remove('hidden');
+      else if (gameId === 'colortap') document.getElementById('colorSection').classList.remove('hidden');
+      else document.getElementById('comingSection').classList.remove('hidden');
+
+      const cards = document.querySelectorAll('.game-card');
+      cards.forEach(function (card) {
+        card.classList.toggle('active', card.getAttribute('data-game') === gameId);
+      });
+    }
+
+    document.querySelectorAll('.game-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        showGame(card.getAttribute('data-game'));
+      });
+    });
 
     document.addEventListener('keydown', function (e) {
       const key = e.key.toLowerCase();
@@ -540,7 +976,8 @@
       if (key === 'd' || key === 'arrowright') keys.right = true;
       if (key === 'w' || key === 'arrowup' || key === ' ') {
         e.preventDefault();
-        jump();
+        if (activeGame === 'skydrop') skyJump();
+        if (activeGame === 'colortap') colorJump();
       }
     });
 
@@ -558,14 +995,43 @@
       button.addEventListener('touchend', function (e) { e.preventDefault(); actionStop(); }, { passive: false });
     }
 
-    holdButton(document.getElementById('leftBtn'), function () { keys.left = true; }, function () { keys.left = false; });
-    holdButton(document.getElementById('rightBtn'), function () { keys.right = true; }, function () { keys.right = false; });
-    document.getElementById('jumpBtn').addEventListener('click', jump);
-    document.getElementById('restartBtn').addEventListener('click', restartGame);
-    document.getElementById('rewardBtn').addEventListener('click', claimReward);
+    holdButton(document.getElementById('skyLeftBtn'), function () { keys.left = true; }, function () { keys.left = false; });
+    holdButton(document.getElementById('skyRightBtn'), function () { keys.right = true; }, function () { keys.right = false; });
+    document.getElementById('skyJumpBtn').addEventListener('click', skyJump);
+    document.getElementById('skyRestartBtn').addEventListener('click', skyRestart);
+    document.getElementById('skyNextBtn').addEventListener('click', skyNextLevel);
+    document.getElementById('skyRewardBtn').addEventListener('click', skyClaimReward);
 
-    updateDisplays();
-    frame();
+    holdButton(document.getElementById('colorLeftBtn'), function () { keys.left = true; }, function () { keys.left = false; });
+    holdButton(document.getElementById('colorRightBtn'), function () { keys.right = true; }, function () { keys.right = false; });
+    document.getElementById('colorJumpBtn').addEventListener('click', colorJump);
+    document.getElementById('colorRestartBtn').addEventListener('click', colorRestart);
+    document.getElementById('colorNextBtn').addEventListener('click', colorNextLevel);
+
+    document.querySelectorAll('.color-btn').forEach(function (button) {
+      button.addEventListener('click', function () {
+        colorGame.brushColor = button.getAttribute('data-color');
+        document.querySelectorAll('.color-btn').forEach(function (b) { b.classList.remove('active'); });
+        button.classList.add('active');
+      });
+    });
+
+    function loop() {
+      if (activeGame === 'skydrop') {
+        updateSkyGame();
+        drawSkyGame();
+      } else if (activeGame === 'colortap') {
+        updateColorGame();
+        drawColorGame();
+      }
+      requestAnimationFrame(loop);
+    }
+
+    loadSkyLevel(1);
+    loadColorLevel(1);
+    totalPointsHeader.textContent = totalArcadePoints;
+    showGame('skydrop');
+    loop();
   </script>
 </body>
 </html>
