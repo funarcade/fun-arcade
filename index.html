@@ -13,27 +13,18 @@
       color: #eef2ff;
     }
     header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(10, 14, 30, 0.9);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 20px;
+      padding: 22px 16px;
       text-align: center;
+      background: rgba(10, 14, 30, 0.92);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     h1 {
       margin: 0;
-      font-size: 2rem;
+      font-size: 2.1rem;
     }
     .subtitle {
       margin-top: 8px;
       color: #c7d2fe;
-    }
-    main {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 24px;
     }
     .top-stats {
       display: flex;
@@ -50,29 +41,27 @@
       color: #e0e7ff;
       font-weight: bold;
     }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 16px 40px;
+    }
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-      margin-bottom: 24px;
+      gap: 16px;
+      margin-bottom: 22px;
     }
     .game-card {
-      background: rgba(17, 24, 39, 0.78);
+      background: rgba(17, 24, 39, 0.8);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 18px;
-      cursor: pointer;
-      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+      border-radius: 18px;
+      padding: 16px;
       box-shadow: 0 10px 24px rgba(0,0,0,0.18);
-    }
-    .game-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(129, 140, 248, 0.6);
-      background: rgba(24, 33, 56, 0.92);
     }
     .game-card.active {
       border-color: #60a5fa;
-      background: rgba(24, 33, 56, 0.98);
+      background: rgba(24, 33, 56, 0.95);
     }
     .game-card h3 {
       margin: 0 0 8px;
@@ -86,36 +75,24 @@
     .panel {
       background: rgba(10, 14, 30, 0.88);
       border-radius: 24px;
-      padding: 22px;
+      padding: 20px;
       border: 1px solid rgba(255,255,255,0.08);
       box-shadow: 0 16px 40px rgba(0,0,0,0.25);
     }
     .game-layout {
       display: grid;
-      grid-template-columns: 1.35fr 0.9fr;
+      grid-template-columns: 1.4fr 0.9fr;
       gap: 20px;
       align-items: start;
     }
-    .side-box {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 18px;
-    }
-    .side-box h3 {
-      margin-top: 0;
-      margin-bottom: 12px;
-    }
-    .side-box p, .side-box li {
-      color: #dbe4ff;
-      line-height: 1.5;
+    .canvas-wrap {
+      width: 100%;
     }
     canvas {
       width: 100%;
-      max-width: 760px;
-      height: 520px;
+      height: auto;
       display: block;
-      border-radius: 22px;
+      border-radius: 20px;
       border: 3px solid rgba(255,255,255,0.12);
       background: linear-gradient(180deg, #071123 0%, #0f1d44 45%, #131a3a 100%);
       touch-action: none;
@@ -125,8 +102,6 @@
       gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
-    }
-    .buttons {
       margin-top: 14px;
     }
     button {
@@ -144,11 +119,22 @@
       background: #111827;
       box-shadow: 0 8px 18px rgba(17,24,39,0.3);
     }
-    .touch-controls {
-      margin-top: 12px;
-    }
     .touch-controls button {
       min-width: 84px;
+    }
+    .side-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 18px;
+    }
+    .side-box h2 {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+    .side-box p {
+      line-height: 1.5;
+      color: #dbe4ff;
     }
     .score-row {
       display: grid;
@@ -172,20 +158,16 @@
       font-weight: bold;
       color: white;
     }
-    .coming-soon {
-      padding: 18px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.04);
-      color: #dbe4ff;
-      line-height: 1.55;
+    .status-box {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
     }
     @media (max-width: 940px) {
       .game-layout {
         grid-template-columns: 1fr;
-      }
-      canvas {
-        height: 460px;
       }
     }
   </style>
@@ -196,91 +178,89 @@
     <div class="subtitle">10 games, one arcade, and every game uses points.</div>
     <div class="top-stats">
       <div class="pill">Total Arcade Points: <span id="totalPointsHeader">0</span></div>
-      <div class="pill">Current Game: <span id="currentGameName">SkyDrop</span></div>
+      <div class="pill">Current Game: SkyDrop</div>
     </div>
   </header>
 
   <main>
-    <section class="menu-grid" id="gameMenu"></section>
+    <section class="menu-grid">
+      <div class="game-card active">
+        <h3>SkyDrop</h3>
+        <p>An alien jumps across moons in space to reach a black portal. Then a UFO appears and you can claim a reward.</p>
+      </div>
+      <div class="game-card"><h3>Maze Quest</h3><p>Coming soon. This game will also use points.</p></div>
+      <div class="game-card"><h3>Treasure Tiles</h3><p>Coming soon. This game will also use points.</p></div>
+      <div class="game-card"><h3>Bubble Match</h3><p>Coming soon. This game will also use points.</p></div>
+    </section>
+
     <section class="panel">
-      <div id="gameContent"></div>
+      <div class="game-layout">
+        <div class="canvas-wrap">
+          <canvas id="skyCanvas" width="760" height="520"></canvas>
+          <div class="buttons">
+            <button id="restartBtn">Restart Game</button>
+            <button id="rewardBtn" class="secondary">Claim Reward</button>
+          </div>
+          <div class="touch-controls">
+            <button id="leftBtn">Left</button>
+            <button id="jumpBtn">Jump</button>
+            <button id="rightBtn">Right</button>
+          </div>
+        </div>
+
+        <div class="side-box">
+          <h2>SkyDrop</h2>
+          <div class="score-row">
+            <div class="score-box">
+              <div class="score-label">This Game Points</div>
+              <div class="score-value" id="gamePointsValue">0</div>
+            </div>
+            <div class="score-box">
+              <div class="score-label">Reward Bonus</div>
+              <div class="score-value">150</div>
+            </div>
+          </div>
+          <p><strong>Story:</strong> An alien is jumping across moons in space. Reach the black portal to travel to a planet. After that, fly the UFO and collect your reward.</p>
+          <p><strong>Keyboard:</strong> A or Left Arrow = move left. D or Right Arrow = move right. W, Up Arrow, or Space = jump.</p>
+          <p><strong>Touch:</strong> Use the left, jump, and right buttons.</p>
+          <p><strong>Goal:</strong> Collect stars for points, jump from moon to moon, and touch the black portal at the top.</p>
+          <div class="status-box" id="skyStatusText"><strong>Status:</strong> Jump to the moons and reach the portal.</div>
+        </div>
+      </div>
     </section>
   </main>
 
   <script>
-    const arcadeState = {
-      totalPoints: 0,
-      activeGame: 'skydrop'
-    };
+    const canvas = document.getElementById('skyCanvas');
+    const ctx = canvas.getContext('2d');
+    const totalPointsHeader = document.getElementById('totalPointsHeader');
+    const gamePointsValue = document.getElementById('gamePointsValue');
+    const statusText = document.getElementById('skyStatusText');
 
-    const games = [
-      { id: 'skydrop', title: 'SkyDrop', description: 'A space jumping game. An alien jumps across moons to reach the black portal and then flies a UFO.' },
-      { id: 'game2', title: 'Maze Quest', description: 'Coming soon. This game will also use points.' },
-      { id: 'game3', title: 'Treasure Tiles', description: 'Coming soon. This game will also use points.' },
-      { id: 'game4', title: 'Bubble Match', description: 'Coming soon. This game will also use points.' },
-      { id: 'game5', title: 'Racing Dash', description: 'Coming soon. This game will also use points.' },
-      { id: 'game6', title: 'Color Tap', description: 'Coming soon. This game will also use points.' },
-      { id: 'game7', title: 'Memory Mix', description: 'Coming soon. This game will also use points.' },
-      { id: 'game8', title: 'Fruit Catch', description: 'Coming soon. This game will also use points.' },
-      { id: 'game9', title: 'Robot Run', description: 'Coming soon. This game will also use points.' },
-      { id: 'game10', title: 'Puzzle Spin', description: 'Coming soon. This game will also use points.' }
-    ];
+    let totalArcadePoints = 0;
+    const keys = { left: false, right: false };
 
-    const gameMenu = document.getElementById('gameMenu');
-    const gameContent = document.getElementById('gameContent');
-
-    function renderMenu() {
-      gameMenu.innerHTML = '';
-      games.forEach(game => {
-        const card = document.createElement('div');
-        card.className = 'game-card' + (arcadeState.activeGame === game.id ? ' active' : '');
-        card.innerHTML = `<h3>${game.title}</h3><p>${game.description}</p>`;
-        card.addEventListener('click', () => {
-          arcadeState.activeGame = game.id;
-          document.getElementById('currentGameName').textContent = game.title;
-          renderMenu();
-          renderGame();
-        });
-        gameMenu.appendChild(card);
-      });
-    }
-
-    let canvas, ctx, animationId;
-    let skyGame = null;
-    const keys = { left: false, right: false, jump: false };
-
-    function createSkyDropLevel() {
+    function makeGame() {
       return {
         width: 760,
         height: 520,
-        gravity: 0.48,
-        friction: 0.84,
+        gravity: 0.45,
+        friction: 0.85,
         gamePoints: 0,
+        won: false,
         rewardClaimed: false,
-        status: 'playing',
-        cameraY: 0,
-        stars: createStars(80, 760, 520),
-        alien: {
-          x: 70,
-          y: 440,
-          w: 28,
-          h: 36,
-          vx: 0,
-          vy: 0,
-          onGround: false,
-          color: '#8b5cf6'
-        },
+        alien: { x: 70, y: 438, w: 28, h: 36, vx: 0, vy: 0, onGround: false },
         platforms: [
-          { x: 20, y: 475, w: 130, h: 24, type: 'moon' },
-          { x: 170, y: 410, w: 120, h: 22, type: 'moon' },
-          { x: 330, y: 350, w: 110, h: 22, type: 'moon' },
-          { x: 510, y: 300, w: 120, h: 22, type: 'moon' },
-          { x: 355, y: 235, w: 110, h: 22, type: 'moon' },
-          { x: 200, y: 178, w: 115, h: 22, type: 'moon' },
-          { x: 370, y: 122, w: 120, h: 22, type: 'moon' },
-          { x: 560, y: 78, w: 140, h: 22, type: 'moon' }
+          { x: 20, y: 475, w: 130, h: 24 },
+          { x: 170, y: 410, w: 120, h: 22 },
+          { x: 330, y: 350, w: 110, h: 22 },
+          { x: 510, y: 300, w: 120, h: 22 },
+          { x: 355, y: 235, w: 110, h: 22 },
+          { x: 200, y: 178, w: 115, h: 22 },
+          { x: 370, y: 122, w: 120, h: 22 },
+          { x: 560, y: 78, w: 140, h: 22 }
         ],
-        collectibles: [
+        stars: [
           { x: 225, y: 376, r: 8, value: 25, taken: false },
           { x: 382, y: 315, r: 8, value: 25, taken: false },
           { x: 548, y: 265, r: 8, value: 25, taken: false },
@@ -289,272 +269,146 @@
           { x: 435, y: 90, r: 8, value: 25, taken: false }
         ],
         portal: { x: 625, y: 28, w: 44, h: 44 },
-        ufo: { x: 635, y: 58, w: 68, h: 26 }
+        backgroundStars: Array.from({ length: 70 }, function () {
+          return {
+            x: Math.random() * 760,
+            y: Math.random() * 520,
+            r: Math.random() * 1.8 + 0.5,
+            a: Math.random() * 0.7 + 0.2
+          };
+        })
       };
     }
 
-    function createStars(count, width, height) {
-      return Array.from({ length: count }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: Math.random() * 1.8 + 0.5,
-        alpha: Math.random() * 0.7 + 0.2
-      }));
+    let game = makeGame();
+
+    function updateDisplays() {
+      totalPointsHeader.textContent = totalArcadePoints;
+      gamePointsValue.textContent = game.gamePoints;
     }
 
-    function addPoints(amount) {
-      arcadeState.totalPoints += amount;
-      const header = document.getElementById('totalPointsHeader');
-      if (header) header.textContent = arcadeState.totalPoints;
+    function setStatus(message) {
+      statusText.innerHTML = '<strong>Status:</strong> ' + message;
     }
 
-    function renderGame() {
-      cancelAnimationFrame(animationId);
-      if (arcadeState.activeGame !== 'skydrop') {
-        const game = games.find(g => g.id === arcadeState.activeGame);
-        gameContent.innerHTML = `
-          <h2 style="margin-top:0;">${game.title}</h2>
-          <div class="coming-soon">
-            This game is not built yet.<br><br>
-            Rule for this arcade: every game gives points. When you build this game later, keep a score system, reward system, and end screen.
-          </div>
-        `;
-        return;
-      }
-
-      gameContent.innerHTML = `
-        <div class="game-layout">
-          <div>
-            <canvas id="skyCanvas" width="760" height="520"></canvas>
-            <div class="buttons">
-              <button onclick="restartSkyDrop()">Restart Game</button>
-              <button class="secondary" onclick="claimReward()">Claim Reward</button>
-            </div>
-            <div class="touch-controls">
-              <button onclick="setTouchMove('left', true)" onmouseup="setTouchMove('left', false)" ontouchstart="setTouchMove('left', true)" ontouchend="setTouchMove('left', false)">Left</button>
-              <button onclick="skyJump()">Jump</button>
-              <button onclick="setTouchMove('right', true)" onmouseup="setTouchMove('right', false)" ontouchstart="setTouchMove('right', true)" ontouchend="setTouchMove('right', false)">Right</button>
-            </div>
-          </div>
-          <div class="side-box">
-            <h3>SkyDrop</h3>
-            <div class="score-row">
-              <div class="score-box">
-                <div class="score-label">This Game Points</div>
-                <div class="score-value" id="gamePointsValue">0</div>
-              </div>
-              <div class="score-box">
-                <div class="score-label">Reward Bonus</div>
-                <div class="score-value" id="rewardValue">100</div>
-              </div>
-            </div>
-            <p><strong>Story:</strong> An alien is jumping across moons in space. Reach the black portal to travel to a planet. After that, fly the UFO and collect your reward.</p>
-            <p><strong>Keyboard:</strong> A or Left Arrow = move left. D or Right Arrow = move right. W, Up Arrow, or Space = jump.</p>
-            <p><strong>Touch:</strong> Use the left, jump, and right buttons.</p>
-            <p><strong>Goal:</strong> Collect stars for points, jump from moon to moon, and touch the black portal at the top.</p>
-            <p id="skyStatusText"><strong>Status:</strong> Jump to the moons and reach the portal.</p>
-          </div>
-        </div>
-      `;
-
-      skyGame = createSkyDropLevel();
-      canvas = document.getElementById('skyCanvas');
-      ctx = canvas.getContext('2d');
-      updatePointDisplays();
-      attachControls();
-      loop();
+    function addPoints(n) {
+      totalArcadePoints += n;
+      updateDisplays();
     }
 
-    function attachControls() {
-      document.onkeydown = e => {
-        const key = e.key.toLowerCase();
-        if (key === 'a' || key === 'arrowleft') keys.left = true;
-        if (key === 'd' || key === 'arrowright') keys.right = true;
-        if (key === 'w' || key === 'arrowup' || key === ' ') skyJump();
-      };
-      document.onkeyup = e => {
-        const key = e.key.toLowerCase();
-        if (key === 'a' || key === 'arrowleft') keys.left = false;
-        if (key === 'd' || key === 'arrowright') keys.right = false;
-      };
-    }
-
-    function setTouchMove(direction, value) {
-      if (direction === 'left') keys.left = value;
-      if (direction === 'right') keys.right = value;
-    }
-
-    function skyJump() {
-      if (!skyGame || skyGame.status !== 'playing') return;
-      const a = skyGame.alien;
-      if (a.onGround) {
-        a.vy = -10.8;
-        a.onGround = false;
+    function jump() {
+      if (game.won) return;
+      if (game.alien.onGround) {
+        game.alien.vy = -10.8;
+        game.alien.onGround = false;
       }
     }
 
-    function updateSkyGame() {
-      const g = skyGame;
-      if (!g) return;
-      const a = g.alien;
+    function resetAlien() {
+      game.alien.x = 70;
+      game.alien.y = 438;
+      game.alien.vx = 0;
+      game.alien.vy = 0;
+      game.alien.onGround = false;
+    }
 
-      if (g.status === 'won') {
-        a.vx = 0;
-        a.vy = 0;
-        return;
-      }
+    function rectsOverlap(a, b) {
+      return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    }
+
+    function updateGame() {
+      const a = game.alien;
+      if (game.won) return;
 
       if (keys.left) a.vx -= 0.6;
       if (keys.right) a.vx += 0.6;
-      a.vx *= g.friction;
-      a.vx = Math.max(-5.5, Math.min(5.5, a.vx));
-      a.vy += g.gravity;
+      a.vx *= game.friction;
+      if (a.vx > 5.5) a.vx = 5.5;
+      if (a.vx < -5.5) a.vx = -5.5;
 
+      a.vy += game.gravity;
       a.x += a.vx;
       a.y += a.vy;
       a.onGround = false;
 
       if (a.x < 0) a.x = 0;
-      if (a.x + a.w > g.width) a.x = g.width - a.w;
+      if (a.x + a.w > game.width) a.x = game.width - a.w;
 
-      for (const p of g.platforms) {
-        const falling = a.vy >= 0;
-        const hitX = a.x + a.w > p.x && a.x < p.x + p.w;
-        const hitY = a.y + a.h >= p.y && a.y + a.h <= p.y + p.h + 12;
-        if (falling && hitX && hitY) {
+      for (let i = 0; i < game.platforms.length; i++) {
+        const p = game.platforms[i];
+        const landing = a.vy >= 0 && a.x + a.w > p.x && a.x < p.x + p.w && a.y + a.h >= p.y && a.y + a.h <= p.y + p.h + 12;
+        if (landing) {
           a.y = p.y - a.h;
           a.vy = 0;
           a.onGround = true;
         }
       }
 
-      if (a.y > g.height + 60) {
-        g.status = 'playing';
-        g.gamePoints = Math.max(0, g.gamePoints - 40);
+      if (a.y > game.height + 60) {
+        game.gamePoints = Math.max(0, game.gamePoints - 40);
         resetAlien();
-        updatePointDisplays();
-        updateStatus('You fell into space. 40 points were removed. Try again.');
+        updateDisplays();
+        setStatus('You fell into space. 40 points were removed. Try again.');
       }
 
-      g.collectibles.forEach(star => {
-        if (star.taken) return;
-        const dx = (a.x + a.w / 2) - star.x;
-        const dy = (a.y + a.h / 2) - star.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < star.r + 18) {
-          star.taken = true;
-          g.gamePoints += star.value;
-          addPoints(star.value);
-          updatePointDisplays();
+      for (let i = 0; i < game.stars.length; i++) {
+        const s = game.stars[i];
+        if (s.taken) continue;
+        const hit = rectsOverlap(a, { x: s.x - s.r, y: s.y - s.r, w: s.r * 2, h: s.r * 2 });
+        if (hit) {
+          s.taken = true;
+          game.gamePoints += s.value;
+          addPoints(s.value);
         }
-      });
-
-      const portal = g.portal;
-      if (
-        a.x + a.w > portal.x &&
-        a.x < portal.x + portal.w &&
-        a.y + a.h > portal.y &&
-        a.y < portal.y + portal.h
-      ) {
-        g.status = 'won';
-        g.gamePoints += 100;
-        addPoints(100);
-        updatePointDisplays();
-        updateStatus('You reached the black portal. UFO unlocked. Press Claim Reward.');
       }
-    }
 
-    function resetAlien() {
-      const a = skyGame.alien;
-      a.x = 70;
-      a.y = 440;
-      a.vx = 0;
-      a.vy = 0;
-      a.onGround = false;
+      if (rectsOverlap(a, game.portal)) {
+        game.won = true;
+        game.gamePoints += 100;
+        addPoints(100);
+        updateDisplays();
+        setStatus('You reached the black portal. The UFO is here. Press Claim Reward.');
+      }
     }
 
     function claimReward() {
-      if (!skyGame) return;
-      if (skyGame.status !== 'won') {
-        updateStatus('Reach the portal first, then claim the reward.');
+      if (!game.won) {
+        setStatus('Reach the portal first, then claim the reward.');
         return;
       }
-      if (skyGame.rewardClaimed) {
-        updateStatus('Reward already claimed. Restart if you want to play again.');
+      if (game.rewardClaimed) {
+        setStatus('Reward already claimed. Restart if you want to play again.');
         return;
       }
-      skyGame.rewardClaimed = true;
-      skyGame.gamePoints += 150;
+      game.rewardClaimed = true;
+      game.gamePoints += 150;
       addPoints(150);
-      updatePointDisplays();
-      updateStatus('Reward claimed. UFO flight completed. You earned 150 bonus points.');
+      updateDisplays();
+      setStatus('Reward claimed. UFO flight completed. You earned 150 bonus points.');
     }
 
-    function restartSkyDrop() {
-      skyGame = createSkyDropLevel();
+    function restartGame() {
+      game = makeGame();
       keys.left = false;
       keys.right = false;
-      updatePointDisplays();
-      updateStatus('Game restarted. Jump to the moons and reach the portal.');
+      updateDisplays();
+      setStatus('Game restarted. Jump to the moons and reach the portal.');
     }
 
-    function updatePointDisplays() {
-      const gp = document.getElementById('gamePointsValue');
-      if (gp && skyGame) gp.textContent = skyGame.gamePoints;
-      const header = document.getElementById('totalPointsHeader');
-      if (header) header.textContent = arcadeState.totalPoints;
-    }
-
-    function updateStatus(text) {
-      const status = document.getElementById('skyStatusText');
-      if (status) status.innerHTML = `<strong>Status:</strong> ${text}`;
-    }
-
-    function drawSkyGame() {
-      const g = skyGame;
-      if (!g || !ctx) return;
-      ctx.clearRect(0, 0, g.width, g.height);
-
-      const gradient = ctx.createLinearGradient(0, 0, 0, g.height);
-      gradient.addColorStop(0, '#081227');
-      gradient.addColorStop(0.5, '#0f214f');
-      gradient.addColorStop(1, '#131737');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, g.width, g.height);
-
-      g.stars.forEach(s => {
-        ctx.globalAlpha = s.alpha;
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
+    function drawPlanet(x, y, r, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 0.2;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(x - r * 0.22, y - r * 0.22, r * 0.4, 0, Math.PI * 2);
+      ctx.fill();
       ctx.globalAlpha = 1;
-
-      drawPlanet(86, 92, 42, '#22c55e');
-      drawPlanet(655, 462, 58, '#f59e0b');
-
-      g.platforms.forEach(p => drawMoonPlatform(p));
-      g.collectibles.forEach(star => { if (!star.taken) drawCollectible(star); });
-      drawPortal(g.portal);
-
-      if (g.status === 'won') drawUFO(g.ufo);
-      drawAlien(g.alien);
-
-      if (g.status === 'won') {
-        ctx.fillStyle = 'rgba(0,0,0,0.36)';
-        ctx.fillRect(0, 0, g.width, g.height);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 34px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Portal Reached', g.width / 2, 180);
-        ctx.font = '22px Arial';
-        ctx.fillText('You can now fly the UFO and claim your reward.', g.width / 2, 220);
-        ctx.fillText(`Points: ${g.gamePoints}`, g.width / 2, 255);
-      }
     }
 
-    function drawMoonPlatform(p) {
+    function drawMoon(p) {
       ctx.fillStyle = '#dbe4ff';
       ctx.beginPath();
       ctx.ellipse(p.x + p.w / 2, p.y + p.h / 2, p.w / 2, p.h / 2, 0, 0, Math.PI * 2);
@@ -564,16 +418,6 @@
       ctx.arc(p.x + p.w * 0.28, p.y + p.h * 0.48, 7, 0, Math.PI * 2);
       ctx.arc(p.x + p.w * 0.63, p.y + p.h * 0.42, 5, 0, Math.PI * 2);
       ctx.fill();
-    }
-
-    function drawCollectible(star) {
-      ctx.fillStyle = '#fde047';
-      ctx.beginPath();
-      ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#fff7ae';
-      ctx.lineWidth = 2;
-      ctx.stroke();
     }
 
     function drawPortal(portal) {
@@ -589,29 +433,27 @@
       ctx.stroke();
     }
 
-    function drawUFO(ufo) {
+    function drawUFO(x, y) {
       ctx.fillStyle = '#93c5fd';
       ctx.beginPath();
-      ctx.ellipse(ufo.x + ufo.w / 2, ufo.y + ufo.h / 2, ufo.w / 2, ufo.h / 2, 0, 0, Math.PI * 2);
+      ctx.ellipse(x, y, 34, 13, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#dbeafe';
       ctx.beginPath();
-      ctx.ellipse(ufo.x + ufo.w / 2, ufo.y + ufo.h / 2 - 8, ufo.w * 0.22, ufo.h * 0.34, 0, 0, Math.PI * 2);
+      ctx.ellipse(x, y - 8, 14, 8, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = 'rgba(34,197,94,0.35)';
       ctx.beginPath();
-      ctx.moveTo(ufo.x + 18, ufo.y + ufo.h);
-      ctx.lineTo(ufo.x + ufo.w - 18, ufo.y + ufo.h);
-      ctx.lineTo(ufo.x + ufo.w / 2, ufo.y + ufo.h + 50);
+      ctx.moveTo(x - 18, y + 13);
+      ctx.lineTo(x + 18, y + 13);
+      ctx.lineTo(x, y + 58);
       ctx.closePath();
       ctx.fill();
     }
 
     function drawAlien(a) {
       ctx.fillStyle = '#7c3aed';
-      ctx.beginPath();
-      ctx.roundRect(a.x, a.y + 8, a.w, a.h - 8, 12);
-      ctx.fill();
+      ctx.fillRect(a.x, a.y + 8, a.w, a.h - 8);
       ctx.fillStyle = '#86efac';
       ctx.beginPath();
       ctx.arc(a.x + a.w / 2, a.y + 10, 13, 0, Math.PI * 2);
@@ -631,32 +473,99 @@
       ctx.stroke();
     }
 
-    function drawPlanet(x, y, r, color) {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 0.2;
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(x - r * 0.22, y - r * 0.22, r * 0.4, 0, Math.PI * 2);
-      ctx.fill();
+    function drawStars() {
+      for (let i = 0; i < game.backgroundStars.length; i++) {
+        const s = game.backgroundStars[i];
+        ctx.globalAlpha = s.a;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.globalAlpha = 1;
     }
 
-    function loop() {
-      updateSkyGame();
-      drawSkyGame();
-      animationId = requestAnimationFrame(loop);
+    function drawCollectible(s) {
+      ctx.fillStyle = '#fde047';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fff7ae';
+      ctx.lineWidth = 2;
+      ctx.stroke();
     }
 
-    renderMenu();
-    renderGame();
+    function drawGame() {
+      ctx.clearRect(0, 0, game.width, game.height);
+      const gradient = ctx.createLinearGradient(0, 0, 0, game.height);
+      gradient.addColorStop(0, '#081227');
+      gradient.addColorStop(0.5, '#0f214f');
+      gradient.addColorStop(1, '#131737');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, game.width, game.height);
 
-    window.skyJump = skyJump;
-    window.restartSkyDrop = restartSkyDrop;
-    window.claimReward = claimReward;
-    window.setTouchMove = setTouchMove;
+      drawStars();
+      drawPlanet(86, 92, 42, '#22c55e');
+      drawPlanet(655, 462, 58, '#f59e0b');
+
+      for (let i = 0; i < game.platforms.length; i++) drawMoon(game.platforms[i]);
+      for (let i = 0; i < game.stars.length; i++) if (!game.stars[i].taken) drawCollectible(game.stars[i]);
+
+      drawPortal(game.portal);
+      if (game.won) drawUFO(650, 95);
+      drawAlien(game.alien);
+
+      if (game.won) {
+        ctx.fillStyle = 'rgba(0,0,0,0.34)';
+        ctx.fillRect(0, 0, game.width, game.height);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 34px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Portal Reached', game.width / 2, 180);
+        ctx.font = '22px Arial';
+        ctx.fillText('Press Claim Reward to finish the level.', game.width / 2, 220);
+        ctx.fillText('Points: ' + game.gamePoints, game.width / 2, 255);
+      }
+    }
+
+    function frame() {
+      updateGame();
+      drawGame();
+      requestAnimationFrame(frame);
+    }
+
+    document.addEventListener('keydown', function (e) {
+      const key = e.key.toLowerCase();
+      if (key === 'a' || key === 'arrowleft') keys.left = true;
+      if (key === 'd' || key === 'arrowright') keys.right = true;
+      if (key === 'w' || key === 'arrowup' || key === ' ') {
+        e.preventDefault();
+        jump();
+      }
+    });
+
+    document.addEventListener('keyup', function (e) {
+      const key = e.key.toLowerCase();
+      if (key === 'a' || key === 'arrowleft') keys.left = false;
+      if (key === 'd' || key === 'arrowright') keys.right = false;
+    });
+
+    function holdButton(button, actionStart, actionStop) {
+      button.addEventListener('mousedown', actionStart);
+      button.addEventListener('mouseup', actionStop);
+      button.addEventListener('mouseleave', actionStop);
+      button.addEventListener('touchstart', function (e) { e.preventDefault(); actionStart(); }, { passive: false });
+      button.addEventListener('touchend', function (e) { e.preventDefault(); actionStop(); }, { passive: false });
+    }
+
+    holdButton(document.getElementById('leftBtn'), function () { keys.left = true; }, function () { keys.left = false; });
+    holdButton(document.getElementById('rightBtn'), function () { keys.right = true; }, function () { keys.right = false; });
+    document.getElementById('jumpBtn').addEventListener('click', jump);
+    document.getElementById('restartBtn').addEventListener('click', restartGame);
+    document.getElementById('rewardBtn').addEventListener('click', claimReward);
+
+    updateDisplays();
+    frame();
   </script>
 </body>
 </html>
